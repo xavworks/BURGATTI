@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chiron 3D | Velocity Motors</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif}header{height:82px;padding:20px 5%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929}.brand{color:#fff;text-decoration:none;font-weight:800;letter-spacing:.18em}.back{color:#fff;text-decoration:none;border:1px solid #444;padding:13px 18px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}#viewer{position:relative;height:70vh;min-height:430px;overflow:hidden;background:radial-gradient(circle at 50% 35%,#303944,#080909 70%)}#viewer canvas{display:block;width:100%;height:100%}.label{position:absolute;z-index:2;top:35px;left:5%;pointer-events:none}.eyebrow{font-size:10px;letter-spacing:.2em;color:#999;text-transform:uppercase}.label h1{font-size:clamp(48px,8vw,110px);line-height:.85;letter-spacing:-.06em;margin:10px 0}.label span{display:block;color:#555}.status{position:absolute;z-index:3;left:5%;bottom:25px;max-width:90%;padding:12px 15px;background:#0009;border:1px solid #444;color:#ccc;font-size:12px}.error{color:#ffaaa0;border-color:#a33}.info{padding:45px 5%;border-top:1px solid #292929}.info h2{font-size:clamp(30px,5vw,65px);margin:10px 0}.info p{color:#aaa;line-height:1.7;max-width:650px}footer{padding:20px 5%;border-top:1px solid #292929;color:#666;font-size:10px;letter-spacing:.15em}@media(max-width:700px){header{height:70px;padding:16px 20px}.back{padding:10px;font-size:9px}#viewer{height:560px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="./index.html">VELOCITY</a><a class="back" href="./index.html#models">← Back to Collection</a></header>
+<main>
+<section id="viewer">
+<div class="label"><div class="eyebrow">Digital Experience / 01</div><h1>CHIRON<span>3D</span></h1></div>
+<div id="status" class="status">Loading Bugatti Chiron…</div>
+</section>
+<section class="info"><div class="eyebrow">Velocity Motors</div><h2>Explore every angle.</h2><p>Drag to rotate the vehicle and scroll to zoom. Double-click to reset the camera.</p></section>
+</main>
+<footer>Velocity Motors — Interactive Vehicle Experience</footer>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const viewer=document.querySelector('#viewer');
+const status=document.querySelector('#status');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(35,viewer.clientWidth/viewer.clientHeight,.01,1000);
+camera.position.set(4.5,2.2,6.5);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(viewer.clientWidth,viewer.clientHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.15;
+viewer.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.enablePan=false;controls.minDistance=1.2;controls.maxDistance=14;controls.target.set(0,.8,0);
+scene.add(new THREE.HemisphereLight(0xffffff,0x171717,2.3));
+const key=new THREE.DirectionalLight(0xffffff,4);key.position.set(5,8,6);scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 1.5);
+rim.position.set(-5, 4, -6);
+scene.add(rim);
+const warm=new THREE.PointLight(0xffa46b,15,12);warm.position.set(4,2,-4);scene.add(warm);
+const floor=new THREE.Mesh(new THREE.CircleGeometry(12,96),new THREE.MeshStandardMaterial({color:0x080808,roughness:.8,metalness:.2}));floor.rotation.x=-Math.PI/2;scene.add(floor);
+function message(text,error=false){status.textContent=text;status.classList.toggle('error',error)}
+new GLTFLoader().load('./models/bugatti-chiron.glb',gltf=>{
+ const car=gltf.scene;scene.add(car);
+ car.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+ const box=new THREE.Box3().setFromObject(car);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());
+ car.position.sub(center);car.scale.setScalar(4.6/Math.max(size.x,size.y,size.z));
+ car.position.sub(center);
+
+car.scale.setScalar(
+    4.6 / Math.max(
+        size.x,
+        size.y,
+        size.z
+    )
+);
+
+/* FIX CAR HEIGHT */
+
+const scaled =
+    new THREE.Box3()
+        .setFromObject(car);
+
+const floorY = 0.08;
+
+const clearance = 0.08;
+
+car.position.y +=
+    floorY + clearance - scaled.min.y;
+
+controls.target.set(0, .8, 0);
+ controls.target.set(0,.8,0);camera.position.set(4.5,2.1,6.2);controls.update();message('Drag to rotate • Scroll to zoom');
+},xhr=>{message(xhr.total?`Loading Bugatti Chiron… ${Math.round(xhr.loaded/xhr.total*100)}%`:'Loading Bugatti Chiron…')},error=>{console.error(error);message('Model failed to load. Confirm that bugatti-chiron.glb is a genuine GLB file.',true)});
+viewer.addEventListener('dblclick',()=>{camera.position.set(4.5,2.1,6.2);controls.target.set(0,.8,0);controls.update()});
+function resize(){camera.aspect=viewer.clientWidth/viewer.clientHeight;camera.updateProjectionMatrix();renderer.setSize(viewer.clientWidth,viewer.clientHeight)}
+addEventListener('resize',resize);
+(function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)})();
+</script>
+</body>
+</html>
