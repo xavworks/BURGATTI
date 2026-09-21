@@ -1971,15 +1971,3 @@ button:focus-visible {
         transition: none;
     }
 }
-/* TEST MODEL CARD UPGRADE */
-
-.model-card {
-    position: relative !important;
-    overflow: hidden !important;
-    border: 2px solid red !important;
-}
-
-.model-card:hover {
-    transform: translateY(-10px) !important;
-    box-shadow: 0 25px 60px rgba(255, 255, 255, 0.2) !important;
-}
