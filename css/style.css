@@ -1983,6 +1983,3 @@ button:focus-visible {
     transform: translateY(-10px) !important;
     box-shadow: 0 25px 60px rgba(255, 255, 255, 0.2) !important;
 }
-.model-card {
-    border: 3px solid red !important;
-}

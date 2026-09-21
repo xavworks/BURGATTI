@@ -125,6 +125,98 @@
                 animation: none;
             }
         }
+        /* =========================================
+   PREMIUM MODEL CARD UPGRADE
+========================================= */
+
+.model-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #151515, #080808);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition:
+        transform 0.4s ease,
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+}
+
+/* Premium inner border */
+.model-card::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+    transition: border-color 0.4s ease;
+}
+
+/* Hover animation */
+.model-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+.model-card:hover::after {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Image animation */
+.model-image {
+    overflow: hidden;
+}
+
+.model-image img {
+    transition:
+        transform 0.7s ease,
+        filter 0.7s ease;
+}
+
+.model-card:hover .model-image img {
+    transform: scale(1.06);
+    filter: brightness(1.1) contrast(1.08);
+}
+
+/* Model information */
+.model-info {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(
+        180deg,
+        rgba(10, 10, 10, 0.95),
+        #080808
+    );
+}
+
+/* Specs divider */
+.model-specs {
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Discover link */
+.model-card .text-link {
+    transition:
+        letter-spacing 0.3s ease,
+        color 0.3s ease;
+}
+
+.model-card .text-link:hover {
+    letter-spacing: 1.5px;
+    color: #ffffff;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .model-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .model-card:hover .model-image img {
+        transform: none;
+        filter: none;
+    }
+}
     </style>
 
 </head>
