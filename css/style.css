@@ -160,7 +160,7 @@ button {
     padding: 140px 8% 90px;
     overflow: hidden;
     isolation: isolate;
-    background-image: url("../images/hero-car.png");
+    background-image: url("../images/hero-bg.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
