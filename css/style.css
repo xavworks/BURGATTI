@@ -1794,3 +1794,195 @@ button:focus-visible {
         flex-wrap: wrap;
     }
 }
+/* =========================================
+   PREMIUM MODEL SHOWCASE
+========================================= */
+
+.model-grid {
+    align-items: stretch;
+    gap: 24px;
+}
+
+.model-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #151515 0%, #080808 72%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    transition:
+        transform 0.45s ease,
+        border-color 0.45s ease,
+        box-shadow 0.45s ease;
+}
+
+/* Small collection label */
+.model-card::before {
+    content: "VELOCITY / COLLECTION";
+
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    z-index: 3;
+
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+
+    pointer-events: none;
+}
+
+/* Inner border */
+.model-card::after {
+    content: "";
+
+    position: absolute;
+    inset: 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    pointer-events: none;
+    transition: border-color 0.45s ease;
+}
+
+/* Card hover */
+.model-card:hover {
+    transform: translateY(-8px);
+
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45);
+}
+
+.model-card:hover::after {
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Model image */
+.model-image {
+    position: relative;
+    overflow: hidden;
+    background: #0b0b0b;
+}
+
+.model-image::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.04) 35%,
+        rgba(0, 0, 0, 0.52) 100%
+    );
+
+    pointer-events: none;
+}
+
+.model-image img {
+    transition:
+        transform 0.8s cubic-bezier(0.2, 0.65, 0.25, 1),
+        filter 0.8s ease;
+}
+
+/* Image zoom */
+.model-card:hover .model-image img {
+    transform: scale(1.06);
+    filter: contrast(1.08) brightness(1.08);
+}
+
+/* Model information */
+.model-info {
+    position: relative;
+    z-index: 2;
+
+    padding: 28px 28px 32px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(10, 10, 10, 0.96),
+        #080808
+    );
+}
+
+.model-info > p {
+    margin-bottom: 12px;
+
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 9px;
+    letter-spacing: 1.8px;
+}
+
+.model-info h3 {
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+}
+
+/* Specifications */
+.model-specs {
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* Model link */
+.model-card .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 28px;
+
+    transition:
+        gap 0.3s ease,
+        color 0.3s ease;
+}
+
+.model-card .text-link:hover {
+    gap: 16px;
+    color: #ffffff;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .model-grid {
+        gap: 18px;
+    }
+
+    .model-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .model-card:hover .model-image img {
+        transform: none;
+        filter: none;
+    }
+
+    .model-info {
+        padding: 24px 22px 28px;
+    }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .model-card,
+    .model-image img,
+    .model-card .text-link {
+        transition: none;
+    }
+}
+/* TEST MODEL CARD UPGRADE */
+
+.model-card {
+    position: relative !important;
+    overflow: hidden !important;
+    border: 2px solid red !important;
+}
+
+.model-card:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 25px 60px rgba(255, 255, 255, 0.2) !important;
+}
+.model-card {
+    border: 3px solid red !important;
+}
