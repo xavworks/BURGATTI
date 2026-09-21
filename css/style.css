@@ -1733,3 +1733,64 @@ button:focus-visible {
         letter-spacing: -3px;
     }
 }
+
+/* =========================================
+   HERO REFINEMENT — CLEANER DESKTOP COMPOSITION
+========================================= */
+
+@media (min-width: 901px) {
+    .hero {
+        background-position: 58% center;
+    }
+
+    .hero-content {
+        max-width: 690px;
+        padding-top: 8px;
+    }
+
+    .hero h1 {
+        max-width: 680px;
+        font-size: clamp(56px, 6.4vw, 104px);
+        letter-spacing: -4px;
+    }
+
+    .hero-description {
+        max-width: 460px;
+        margin-top: 28px;
+        font-size: 14px;
+    }
+
+    .hero-buttons {
+        margin-top: 28px;
+    }
+
+    .hero-metrics {
+        margin-top: 34px;
+    }
+}
+
+@media (max-width: 900px) {
+    .hero {
+        background-position: 62% center;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero {
+        background-position: 64% center;
+    }
+
+    .hero h1 {
+        font-size: clamp(44px, 12vw, 70px);
+        letter-spacing: -2.5px;
+    }
+
+    .hero-description {
+        max-width: 330px;
+        font-size: 13px;
+    }
+
+    .hero-buttons {
+        flex-wrap: wrap;
+    }
+}
