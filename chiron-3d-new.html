@@ -484,7 +484,16 @@ keyLight.shadow.camera.far = 30;
         warmLight.position.set(4, 2, -4);
 
         scene.add(warmLight);
+// RED ACCENT RIM LIGHT
+const redRimLight = new THREE.PointLight(
+    0xff0018,
+    18,
+    10
+);
 
+redRimLight.position.set(-5, 1.2, 3);
+
+scene.add(redRimLight);
 
        // PREMIUM SHOWROOM FLOOR
 const floor = new THREE.Mesh(
@@ -628,18 +637,124 @@ if (
 scene.add(car); 
 
 
-                // ENABLE MODEL MESHES
-                car.traverse(function (object) {
+               // ENABLE MODEL MESHES + PREMIUM MATERIALS
+car.traverse(function (object) {
 
-                    if (object.isMesh) {
+    if (!object.isMesh) return;
 
-                        object.castShadow = true;
+    // Enable shadows
+    object.castShadow = true;
+    object.receiveShadow = true;
 
-                        object.receiveShadow = true;
+    const name = (object.name || "").toLowerCase();
 
-                    }
+    const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
 
-                });
+    materials.forEach(function (material) {
+
+        if (!material) return;
+
+        // =====================================
+        // CHROME WHEELS
+        // =====================================
+        if (
+            name.includes("rim") ||
+            name.includes("wheel")
+        ) {
+
+            material.map = null;
+
+            material.color.set("#ffffff");
+            material.metalness = 1.0;
+            material.roughness = 0.04;
+
+            material.emissive.set("#000000");
+            material.emissiveIntensity = 0;
+
+            if (material.isMeshPhysicalMaterial) {
+                material.clearcoat = 1.0;
+                material.clearcoatRoughness = 0.04;
+            }
+
+            material.needsUpdate = true;
+
+            return;
+        }
+
+
+      // RED BRAKE CALIPERS ONLY
+if (name.includes("caliper")) {
+
+    material.map = null;
+
+    material.color.set("#c40018");
+    material.metalness = 0.5;
+    material.roughness = 0.25;
+
+    material.needsUpdate = true;
+
+    return;
+}
+
+
+        // =====================================
+        // KEEP TIRES BLACK
+        // =====================================
+        if (
+            name.includes("tire") ||
+            name.includes("tyre")
+        ) {
+
+            material.color.set("#050505");
+            material.metalness = 0.05;
+            material.roughness = 0.8;
+
+            material.needsUpdate = true;
+
+            return;
+        }
+
+
+        // =====================================
+        // GLOSSY OBSIDIAN BLACK BODY
+        // =====================================
+        if (
+            !name.includes("glass") &&
+            !name.includes("window") &&
+            !name.includes("interior") &&
+            !name.includes("seat") &&
+            !name.includes("dashboard") &&
+            !name.includes("brake") &&
+            !name.includes("caliper") &&
+            !name.includes("rim") &&
+            !name.includes("wheel") &&
+            !name.includes("tire") &&
+            !name.includes("tyre")
+        ) {
+
+            material.map = null;
+
+            material.color.set("#050505");
+            material.metalness = 0.75;
+            material.roughness = 0.12;
+
+            material.emissive.set("#000000");
+            material.emissiveIntensity = 0;
+
+            if (material.isMeshPhysicalMaterial) {
+                material.clearcoat = 1.0;
+                material.clearcoatRoughness = 0.05;
+            }
+
+            material.needsUpdate = true;
+
+        }
+
+    });
+
+});
 
 
                 // GET MODEL SIZE
