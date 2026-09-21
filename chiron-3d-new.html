@@ -393,10 +393,14 @@
 
 
         // RENDERER
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true
-        });
+       const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true
+});
+
+// PREMIUM SHADOWS
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         renderer.setPixelRatio(
             Math.min(window.devicePixelRatio, 2)
@@ -451,7 +455,13 @@
         );
 
         keyLight.position.set(5, 8, 6);
+keyLight.castShadow = true;
 
+keyLight.shadow.mapSize.width = 2048;
+keyLight.shadow.mapSize.height = 2048;
+
+keyLight.shadow.camera.near = 0.5;
+keyLight.shadow.camera.far = 30;
         scene.add(keyLight);
 
 
@@ -476,19 +486,29 @@
         scene.add(warmLight);
 
 
-        // FLOOR
-        const floor = new THREE.Mesh(
-            new THREE.CircleGeometry(12, 96),
-            new THREE.MeshStandardMaterial({
-                color: 0x080808,
-                roughness: 0.8,
-                metalness: 0.2
-            })
-        );
+       // PREMIUM SHOWROOM FLOOR
+const floor = new THREE.Mesh(
+    new THREE.CircleGeometry(12, 96),
 
-        floor.rotation.x = -Math.PI / 2;
+    new THREE.MeshPhysicalMaterial({
+        color: 0x080b12,
 
-        scene.add(floor);
+        // Smooth luxury floor
+        roughness: 0.22,
+        metalness: 0.65,
+
+        // Glossy surface
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.12
+    })
+);
+
+floor.rotation.x = -Math.PI / 2;
+
+// Receive car shadows
+floor.receiveShadow = true;
+
+scene.add(floor);
 
 
         // STATUS MESSAGE
@@ -515,30 +535,93 @@
 
               const car = gltf.scene;
 
-// OBSIDIAN BLACK BODY
+// PREMIUM CAR CONFIGURATION
 car.traverse(function (object) {
 
-    if (object.isMesh && object.material) {
-
-        const materials = Array.isArray(object.material)
-            ? object.material
-            : [object.material];
-
-        materials.forEach(function (material) {
-
-            if (material.color) {
-
-                material.color.set("#080808");
-
-                material.metalness = 0.75;
-
-                material.roughness = 0.22;
-
-            }
-
-        });
-
+    if (!object.isMesh || !object.material) {
+        return;
     }
+
+    const meshName = object.name.toLowerCase();
+
+    const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+
+    materials.forEach(function (material) {
+
+        if (!material.color) {
+            return;
+        }
+
+        // MATERIAL NAME
+        const materialName = (
+            material.name || ""
+        ).toLowerCase();
+
+
+        // COMBINE OBJECT AND MATERIAL NAMES
+        const name = meshName + " " + materialName;
+
+
+        // 🔴 RED BRAKE CALIPERS
+        if (
+            name.includes("caliper") ||
+            name.includes("brake")
+        ) {
+
+            material.color.set("#b30000");
+
+            material.metalness = 0.65;
+
+            material.roughness = 0.28;
+
+            return;
+        }
+
+
+       // BLACK RUBBER TIRES
+if (
+    name.includes("tire") ||
+    name.includes("tyre")
+) {
+    material.color.set("#050505");
+    material.metalness = 0.05;
+    material.roughness = 0.85;
+    return;
+}
+
+// FULL CHROME RIMS
+if (
+    name.includes("rim") ||
+    name.includes("wheel")
+) {
+    // Remove original blue/colored texture
+    material.map = null;
+
+    // Bright chrome finish
+    material.color.set("#ffffff");
+    material.metalness = 1.0;
+    material.roughness = 0.03;
+
+    // Remove original color effects
+    material.emissive.set("#000000");
+    material.emissiveIntensity = 0;
+
+    material.needsUpdate = true;
+
+    return;
+}
+
+
+        // 🖤 OBSIDIAN BLACK BODY
+        material.color.set("#080808");
+
+        material.metalness = 0.75;
+
+        material.roughness = 0.22;
+
+    });
 
 });
 
