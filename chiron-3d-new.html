@@ -513,9 +513,36 @@
 
             function (gltf) {
 
-                const car = gltf.scene;
+              const car = gltf.scene;
 
-                scene.add(car);
+// OBSIDIAN BLACK BODY
+car.traverse(function (object) {
+
+    if (object.isMesh && object.material) {
+
+        const materials = Array.isArray(object.material)
+            ? object.material
+            : [object.material];
+
+        materials.forEach(function (material) {
+
+            if (material.color) {
+
+                material.color.set("#080808");
+
+                material.metalness = 0.75;
+
+                material.roughness = 0.22;
+
+            }
+
+        });
+
+    }
+
+});
+
+scene.add(car); 
 
 
                 // ENABLE MODEL MESHES
