@@ -1981,3 +1981,60 @@ button:focus-visible {
 .model-card:hover {
     border-color: rgba(255, 255, 255, 0.5) !important;
 }
+/* =========================================
+   LUXURY DISCOVER LINK HOVER
+========================================= */
+
+.model-card .text-link {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-decoration: none;
+
+    transition:
+        gap 0.35s ease,
+        color 0.35s ease,
+        text-shadow 0.35s ease;
+}
+
+/* Animated underline */
+.model-card .text-link::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+
+    width: 0;
+    height: 1px;
+
+    background: #ffffff;
+
+    transition: width 0.35s ease;
+}
+
+/* Hover effect */
+.model-card .text-link:hover {
+    gap: 18px;
+    color: #ffffff;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+}
+
+.model-card .text-link:hover::after {
+    width: 100%;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .model-card .text-link,
+    .model-card .text-link::after {
+        transition: none;
+    }
+}
