@@ -1,94 +1,681 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chiron 3D | Velocity Motors</title>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-  }
-}
-</script>
-<style>
-*{box-sizing:border-box}html,body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif}header{height:82px;padding:20px 5%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929}.brand{color:#fff;text-decoration:none;font-weight:800;letter-spacing:.18em}.back{color:#fff;text-decoration:none;border:1px solid #444;padding:13px 18px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}#viewer{position:relative;height:70vh;min-height:430px;overflow:hidden;background:radial-gradient(circle at 50% 35%,#303944,#080909 70%)}#viewer canvas{display:block;width:100%;height:100%}.label{position:absolute;z-index:2;top:35px;left:5%;pointer-events:none}.eyebrow{font-size:10px;letter-spacing:.2em;color:#999;text-transform:uppercase}.label h1{font-size:clamp(48px,8vw,110px);line-height:.85;letter-spacing:-.06em;margin:10px 0}.label span{display:block;color:#555}.status{position:absolute;z-index:3;left:5%;bottom:25px;max-width:90%;padding:12px 15px;background:#0009;border:1px solid #444;color:#ccc;font-size:12px}.error{color:#ffaaa0;border-color:#a33}.info{padding:45px 5%;border-top:1px solid #292929}.info h2{font-size:clamp(30px,5vw,65px);margin:10px 0}.info p{color:#aaa;line-height:1.7;max-width:650px}footer{padding:20px 5%;border-top:1px solid #292929;color:#666;font-size:10px;letter-spacing:.15em}@media(max-width:700px){header{height:70px;padding:16px 20px}.back{padding:10px;font-size:9px}#viewer{height:560px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Chiron 3D | Velocity Motors</title>
+
+    <!-- THREE.JS IMPORT MAP -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --line: rgba(255, 255, 255, 0.14);
+            --muted: rgba(255, 255, 255, 0.52);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            height: 82px;
+            padding: 20px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(14px);
+        }
+
+        a {
+            color: #ffffff;
+        }
+
+        .brand {
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.24em;
+        }
+
+        .back {
+            padding: 13px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            text-decoration: none;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            transition: 0.3s ease;
+        }
+
+        .back:hover {
+            background: #ffffff;
+            color: #050505;
+        }
+
+        #viewer {
+            position: relative;
+            height: 70vh;
+            min-height: 470px;
+            overflow: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 50% 28%,
+                    rgba(92, 108, 122, 0.4),
+                    transparent 34%
+                ),
+                linear-gradient(
+                    180deg,
+                    #161b20,
+                    #070808 78%
+                );
+        }
+
+        #viewer::after {
+            content: "";
+            position: absolute;
+            inset: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            pointer-events: none;
+        }
+
+        #viewer canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .label {
+            position: absolute;
+            z-index: 2;
+            top: 42px;
+            left: 5%;
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .label h1 {
+            margin: 12px 0 0;
+            font-size: clamp(52px, 8vw, 112px);
+            line-height: 0.82;
+            letter-spacing: -0.075em;
+        }
+
+        .label h1 span {
+            display: block;
+            color: rgba(255, 255, 255, 0.18);
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.32);
+        }
+
+        .viewer-meta {
+            position: absolute;
+            right: 5%;
+            top: 44px;
+            z-index: 2;
+            text-align: right;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.8;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .status {
+            position: absolute;
+            z-index: 3;
+            left: 5%;
+            bottom: 28px;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #dddddd;
+            font-size: 11px;
+            backdrop-filter: blur(10px);
+        }
+
+        .error {
+            color: #ffaaa0;
+            border-color: #aa3333;
+        }
+
+        .info {
+            padding: 64px 5%;
+            border-top: 1px solid var(--line);
+            background: linear-gradient(#090909, #050505);
+        }
+
+        .info h2 {
+            margin: 12px 0 18px;
+            font-size: clamp(36px, 5vw, 72px);
+            line-height: 0.95;
+            letter-spacing: -0.055em;
+        }
+
+        .info p {
+            max-width: 650px;
+            margin: 0;
+            color: #999999;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 34px;
+            margin-top: 34px;
+            padding-top: 22px;
+            border-top: 1px solid var(--line);
+        }
+
+        .info-grid div {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-grid strong {
+            font-size: 13px;
+        }
+
+        .info-grid span {
+            color: #666666;
+            font-size: 9px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        footer {
+            padding: 22px 5%;
+            border-top: 1px solid var(--line);
+            color: #666666;
+            font-size: 10px;
+            letter-spacing: 0.15em;
+        }
+
+        @media (max-width: 700px) {
+            header {
+                height: 70px;
+                padding: 16px 20px;
+            }
+
+            .back {
+                padding: 10px 12px;
+                font-size: 8px;
+            }
+
+            #viewer {
+                height: 560px;
+                min-height: 560px;
+            }
+
+            .label {
+                top: 28px;
+                left: 24px;
+            }
+
+            .viewer-meta {
+                top: 30px;
+                right: 24px;
+                font-size: 8px;
+            }
+
+            .status {
+                left: 24px;
+                bottom: 22px;
+            }
+
+            .info {
+                padding: 46px 24px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-<header><a class="brand" href="./index.html">VELOCITY</a><a class="back" href="./index.html#models">← Back to Collection</a></header>
-<main>
-<section id="viewer">
-<div class="label"><div class="eyebrow">Digital Experience / 01</div><h1>CHIRON<span>3D</span></h1></div>
-<div id="status" class="status">Loading Bugatti Chiron…</div>
-</section>
-<section class="info"><div class="eyebrow">Velocity Motors</div><h2>Explore every angle.</h2><p>Drag to rotate the vehicle and scroll to zoom. Double-click to reset the camera.</p></section>
-</main>
-<footer>Velocity Motors — Interactive Vehicle Experience</footer>
-<script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const viewer=document.querySelector('#viewer');
-const status=document.querySelector('#status');
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(35,viewer.clientWidth/viewer.clientHeight,.01,1000);
-camera.position.set(4.5,2.2,6.5);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-renderer.setSize(viewer.clientWidth,viewer.clientHeight);
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.15;
-viewer.appendChild(renderer.domElement);
-const controls=new OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true;controls.enablePan=false;controls.minDistance=1.2;controls.maxDistance=14;controls.target.set(0,.8,0);
-scene.add(new THREE.HemisphereLight(0xffffff,0x171717,2.3));
-const key=new THREE.DirectionalLight(0xffffff,4);key.position.set(5,8,6);scene.add(key);
-const rim = new THREE.DirectionalLight(0xffffff, 1.5);
-rim.position.set(-5, 4, -6);
-scene.add(rim);
-const warm=new THREE.PointLight(0xffa46b,15,12);warm.position.set(4,2,-4);scene.add(warm);
-const floor=new THREE.Mesh(new THREE.CircleGeometry(12,96),new THREE.MeshStandardMaterial({color:0x080808,roughness:.8,metalness:.2}));floor.rotation.x=-Math.PI/2;scene.add(floor);
-function message(text,error=false){status.textContent=text;status.classList.toggle('error',error)}
-new GLTFLoader().load('./models/bugatti-chiron.glb',gltf=>{
- const car=gltf.scene;scene.add(car);
- car.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
- const box=new THREE.Box3().setFromObject(car);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());
- car.position.sub(center);car.scale.setScalar(4.6/Math.max(size.x,size.y,size.z));
- car.position.sub(center);
+    <!-- HEADER -->
+    <header>
+        <a class="brand" href="./index.html">
+            VELOCITY
+        </a>
 
-car.scale.setScalar(
-    4.6 / Math.max(
-        size.x,
-        size.y,
-        size.z
-    )
-);
+        <a class="back" href="./index.html#models">
+            ← Back to Collection
+        </a>
+    </header>
 
-/* FIX CAR HEIGHT */
 
-const scaled =
-    new THREE.Box3()
-        .setFromObject(car);
+    <!-- MAIN CONTENT -->
+    <main>
 
-const floorY = 0.08;
+        <!-- 3D VIEWER -->
+        <section id="viewer">
 
-const clearance = 0.08;
+            <div class="label">
+                <div class="eyebrow">
+                    Digital Experience / 01
+                </div>
 
-car.position.y +=
-    floorY + clearance - scaled.min.y;
+                <h1>
+                    CHIRON
+                    <span>3D</span>
+                </h1>
+            </div>
 
-controls.target.set(0, .8, 0);
- controls.target.set(0,.8,0);camera.position.set(4.5,2.1,6.2);controls.update();message('Drag to rotate • Scroll to zoom');
-},xhr=>{message(xhr.total?`Loading Bugatti Chiron… ${Math.round(xhr.loaded/xhr.total*100)}%`:'Loading Bugatti Chiron…')},error=>{console.error(error);message('Model failed to load. Confirm that bugatti-chiron.glb is a genuine GLB file.',true)});
-viewer.addEventListener('dblclick',()=>{camera.position.set(4.5,2.1,6.2);controls.target.set(0,.8,0);controls.update()});
-function resize(){camera.aspect=viewer.clientWidth/viewer.clientHeight;camera.updateProjectionMatrix();renderer.setSize(viewer.clientWidth,viewer.clientHeight)}
-addEventListener('resize',resize);
-(function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)})();
-</script>
+
+            <div class="viewer-meta">
+                Interactive showroom
+                <br>
+                Real-time model
+            </div>
+
+
+            <div id="status" class="status">
+                Loading Bugatti Chiron…
+            </div>
+
+        </section>
+
+
+        <!-- INFORMATION SECTION -->
+        <section class="info">
+
+            <div class="eyebrow">
+                Velocity Motors
+            </div>
+
+            <h2>
+                Explore every angle.
+            </h2>
+
+            <p>
+                Drag to rotate the vehicle, scroll to zoom,
+                and double-click to reset the camera.
+            </p>
+
+
+            <div class="info-grid">
+
+                <div>
+                    <strong>01</strong>
+                    <span>Drag to rotate</span>
+                </div>
+
+                <div>
+                    <strong>02</strong>
+                    <span>Scroll to zoom</span>
+                </div>
+
+                <div>
+                    <strong>03</strong>
+                    <span>Double-click to reset</span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        Velocity Motors — Interactive Vehicle Experience
+    </footer>
+
+
+    <!-- THREE.JS SCRIPT -->
+    <script type="module">
+
+        import * as THREE from "three";
+
+        import {
+            GLTFLoader
+        } from "three/addons/loaders/GLTFLoader.js";
+
+        import {
+            OrbitControls
+        } from "three/addons/controls/OrbitControls.js";
+
+
+        // ELEMENTS
+        const viewer = document.querySelector("#viewer");
+        const status = document.querySelector("#status");
+
+
+        // SCENE
+        const scene = new THREE.Scene();
+
+
+        // CAMERA
+        const camera = new THREE.PerspectiveCamera(
+            35,
+            viewer.clientWidth / viewer.clientHeight,
+            0.01,
+            1000
+        );
+
+        const defaultCamera = new THREE.Vector3(
+            4.5,
+            2.1,
+            6.2
+        );
+
+        camera.position.copy(defaultCamera);
+
+
+        // RENDERER
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true
+        });
+
+        renderer.setPixelRatio(
+            Math.min(window.devicePixelRatio, 2)
+        );
+
+        renderer.setSize(
+            viewer.clientWidth,
+            viewer.clientHeight
+        );
+
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+        renderer.toneMappingExposure = 1.15;
+
+        viewer.appendChild(renderer.domElement);
+
+
+        // ORBIT CONTROLS
+        const controls = new OrbitControls(
+            camera,
+            renderer.domElement
+        );
+
+        controls.enableDamping = true;
+
+        controls.dampingFactor = 0.06;
+
+        controls.enablePan = false;
+
+        controls.minDistance = 1.2;
+
+        controls.maxDistance = 14;
+
+        controls.target.set(0, 0.8, 0);
+
+
+        // LIGHTING
+        const hemisphereLight = new THREE.HemisphereLight(
+            0xffffff,
+            0x171717,
+            2.3
+        );
+
+        scene.add(hemisphereLight);
+
+
+        const keyLight = new THREE.DirectionalLight(
+            0xffffff,
+            4
+        );
+
+        keyLight.position.set(5, 8, 6);
+
+        scene.add(keyLight);
+
+
+        const rimLight = new THREE.DirectionalLight(
+            0xffffff,
+            1.5
+        );
+
+        rimLight.position.set(-5, 4, -6);
+
+        scene.add(rimLight);
+
+
+        const warmLight = new THREE.PointLight(
+            0xffa46b,
+            15,
+            12
+        );
+
+        warmLight.position.set(4, 2, -4);
+
+        scene.add(warmLight);
+
+
+        // FLOOR
+        const floor = new THREE.Mesh(
+            new THREE.CircleGeometry(12, 96),
+            new THREE.MeshStandardMaterial({
+                color: 0x080808,
+                roughness: 0.8,
+                metalness: 0.2
+            })
+        );
+
+        floor.rotation.x = -Math.PI / 2;
+
+        scene.add(floor);
+
+
+        // STATUS MESSAGE
+        function message(text, error = false) {
+
+            status.textContent = text;
+
+            status.classList.toggle(
+                "error",
+                error
+            );
+
+        }
+
+
+        // LOAD BUGATTI MODEL
+        const loader = new GLTFLoader();
+
+        loader.load(
+
+            "./models/bugatti-chiron.glb",
+
+            function (gltf) {
+
+                const car = gltf.scene;
+
+                scene.add(car);
+
+
+                // ENABLE MODEL MESHES
+                car.traverse(function (object) {
+
+                    if (object.isMesh) {
+
+                        object.castShadow = true;
+
+                        object.receiveShadow = true;
+
+                    }
+
+                });
+
+
+                // GET MODEL SIZE
+                const box = new THREE.Box3().setFromObject(car);
+
+                const size = box.getSize(
+                    new THREE.Vector3()
+                );
+
+                const center = box.getCenter(
+                    new THREE.Vector3()
+                );
+
+
+                // CENTER MODEL
+                car.position.sub(center);
+
+
+                // SCALE MODEL
+                car.scale.setScalar(
+                    4.6 / Math.max(
+                        size.x,
+                        size.y,
+                        size.z
+                    )
+                );
+
+
+                // PLACE MODEL ON FLOOR
+                const scaledBox = new THREE.Box3().setFromObject(car);
+
+                car.position.y += 0.16 - scaledBox.min.y;
+
+
+                // CAMERA TARGET
+                controls.target.set(0, 0.8, 0);
+
+                controls.update();
+
+
+                message(
+                    "Drag to rotate • Scroll to zoom"
+                );
+
+            },
+
+            function (xhr) {
+
+                if (xhr.total) {
+
+                    const progress = Math.round(
+                        (xhr.loaded / xhr.total) * 100
+                    );
+
+                    message(
+                        `Loading Bugatti Chiron… ${progress}%`
+                    );
+
+                } else {
+
+                    message(
+                        "Loading Bugatti Chiron…"
+                    );
+
+                }
+
+            },
+
+            function () {
+
+                message(
+                    "Model failed to load. Confirm that bugatti-chiron.glb exists.",
+                    true
+                );
+
+            }
+
+        );
+
+
+        // RESET CAMERA
+        function resetCamera() {
+
+            camera.position.copy(
+                defaultCamera
+            );
+
+            controls.target.set(
+                0,
+                0.8,
+                0
+            );
+
+            controls.update();
+
+        }
+
+
+        // DOUBLE CLICK TO RESET
+        viewer.addEventListener(
+            "dblclick",
+            resetCamera
+        );
+
+
+        // RESPONSIVE RESIZE
+        function resize() {
+
+            camera.aspect =
+                viewer.clientWidth / viewer.clientHeight;
+
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(
+                viewer.clientWidth,
+                viewer.clientHeight
+            );
+
+        }
+
+
+        window.addEventListener(
+            "resize",
+            resize
+        );
+
+
+        // ANIMATION LOOP
+        function animate() {
+
+            requestAnimationFrame(
+                animate
+            );
+
+            controls.update();
+
+            renderer.render(
+                scene,
+                camera
+            );
+
+        }
+
+        animate();
+
+    </script>
+
 </body>
 </html>
-
